@@ -12,11 +12,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +56,9 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     private QuoteCursorAdapter mCursorAdapter;
     private Context mContext;
     private Cursor mCursor;
-    boolean isConnected;
+    private LinearLayoutCompat mEmptyState;
+    private RecyclerView mRecyclerView;
+    private FloatingActionButton mFab;
 
     protected StockIntentServiceReceiver mServiceReceiver;
 
@@ -62,13 +66,20 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
-        ConnectivityManager cm =
-                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
         setContentView(R.layout.activity_my_stocks);
+
+        mEmptyState = (LinearLayoutCompat) findViewById(R.id.empty_state);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+
+        mEmptyState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                retry();
+            }
+        });
+
         // The intent service is for executing immediate pulls from the Yahoo API
         // GCMTaskService can only schedule tasks, they cannot execute immediately
         mServiceIntent = new Intent(this, StockIntentService.class);
@@ -78,9 +89,11 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         if (savedInstanceState == null) {
             // Run the initialize task service so that some stocks appear upon an empty database
             mServiceIntent.putExtra("tag", "init");
-            if (isConnected) {
+            if (isConnected()) {
+                showEmptyState(false);
                 startService(mServiceIntent);
             } else {
+                showEmptyState(true);
                 networkToast();
             }
         }
@@ -105,7 +118,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isConnected) {
+                if (isConnected()) {
                     new MaterialDialog.Builder(mContext).title(R.string.symbol_search)
                             .content(R.string.content_test)
                             .inputType(InputType.TYPE_CLASS_TEXT)
@@ -145,7 +158,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mItemTouchHelper.attachToRecyclerView(recyclerView);
 
         mTitle = getTitle();
-        if (isConnected) {
+        if (isConnected()) {
             long period = 3600L;
             long flex = 10L;
             String periodicTag = "periodic";
@@ -171,6 +184,38 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     public void onResume() {
         super.onResume();
         getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+    }
+
+    private void retry() {
+
+        if (isConnected()) {
+            showEmptyState(false);
+            mServiceIntent.putExtra("tag", "init");
+            startService(mServiceIntent);
+
+            long period = 3600L;
+            long flex = 10L;
+            String periodicTag = "periodic";
+
+            // create a periodic task to pull stocks once every hour after the app has been opened. This
+            // is so Widget data stays up to date.
+            PeriodicTask periodicTask = new PeriodicTask.Builder()
+                    .setService(StockTaskService.class)
+                    .setPeriod(period)
+                    .setFlex(flex)
+                    .setTag(periodicTag)
+                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                    .setRequiresCharging(false)
+                    .build();
+            // Schedule task with tag "periodic." This ensure that only the stocks present in the DB
+            // are updated.
+            GcmNetworkManager.getInstance(this).schedule(periodicTask);
+        } else {
+            showEmptyState(true);
+            networkToast();
+        }
+
+
     }
 
     public void networkToast() {
@@ -242,5 +287,26 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                         Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
         toast.show();
+    }
+
+    private boolean isConnected() {
+        ConnectivityManager cm =
+                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+    }
+
+    private void showEmptyState(boolean show) {
+        if (show) {
+            mEmptyState.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+            mFab.setVisibility(View.GONE);
+        } else {
+            mEmptyState.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mFab.setVisibility(View.VISIBLE);
+        }
     }
 }

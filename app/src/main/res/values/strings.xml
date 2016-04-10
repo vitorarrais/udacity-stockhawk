@@ -14,4 +14,6 @@
   <string name="stock_already_saved">"This stock is already saved!</string>
   <string name="invalid_stock_symbol">Invalid stock symbol</string>
   <string name="stock_quote_not_found">Sorry, corresponding quote was not found</string>
+  <string name="empty_state_text">Please, check your device connectivity and try again</string>
+  <string name="retry">No connectivity. Please, press to try again.</string>
 </resources>
