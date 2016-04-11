@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.sam_chordas.android.stockhawk.R;
-import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
 
 /**
  * Created by User on 11/04/2016.
@@ -22,13 +21,20 @@ public class StockWidgetProvider extends AppWidgetProvider {
         for (int i = 0; i < N; i++) {
             int appWidgetId = appWidgetIds[i];
 
+
+
             // Create an Intent to launch ExampleActivity
-            Intent intent = new Intent(context, MyStocksActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            Intent intent = new Intent(context, StockWidgetRemoteViewsService.class);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+
 
             // Get the layout for the App Widget and attach an on-click listener
             // to the button
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+            views.setRemoteAdapter(appWidgetId, R.id.widget_list, intent);
+
+            views.setInt(appWidgetId, "setBackgroundColor", context.getResources().getColor(R.color.flat));
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
             views.setOnClickPendingIntent(R.id.widget, pendingIntent);
 
             // Tell the AppWidgetManager to perform an update on the current app widget
