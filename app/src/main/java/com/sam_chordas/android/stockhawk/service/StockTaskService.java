@@ -31,6 +31,7 @@ import java.util.ArrayList;
  * and is used for the initialization and adding task as well.
  */
 public class StockTaskService extends GcmTaskService {
+
     private String LOG_TAG = StockTaskService.class.getSimpleName();
 
     private OkHttpClient client = new OkHttpClient();
@@ -62,7 +63,7 @@ public class StockTaskService extends GcmTaskService {
         if (mContext == null) {
             mContext = this;
         }
-        if (params.getExtras().getParcelable(StockIntentServiceReceiver.STOCK_INTENT_RECEIVER)!=null){
+        if (params.getExtras().getParcelable(StockIntentServiceReceiver.STOCK_INTENT_RECEIVER) != null) {
             mResultReceiver = params.getExtras().getParcelable(StockIntentServiceReceiver.STOCK_INTENT_RECEIVER);
         }
         StringBuilder urlStringBuilder = new StringBuilder();
@@ -143,8 +144,8 @@ public class StockTaskService extends GcmTaskService {
                     Log.e(LOG_TAG, "Error applying batch insert", e);
                 } catch (Utils.StockQuoteNotFoundException e) {
                     e.printStackTrace();
-                    if (mResultReceiver!=null){
-                        mResultReceiver.send(1,null);
+                    if (mResultReceiver != null) {
+                        mResultReceiver.send(1, null);
                     }
                     Log.d(LOG_TAG, "StockQuoteNotFoundException");
                 }
