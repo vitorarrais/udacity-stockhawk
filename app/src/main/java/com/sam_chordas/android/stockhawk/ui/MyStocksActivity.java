@@ -108,6 +108,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     public void onItemClick(View v, int position) {
                         //TODO:
                         // do something on item click
+                        mCursorAdapter.onItemClick(position);
                     }
                 }));
         recyclerView.setAdapter(mCursorAdapter);

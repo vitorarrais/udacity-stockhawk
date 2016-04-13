@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.os.Binder;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -36,12 +38,26 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
 
     @Override
     public void onDataSetChanged() {
-
+        if (mData != null) {
+            mData.close();
+            mData = null;
+        }
+        final long identityToken = Binder.clearCallingIdentity();
+        Log.d(StockWidgetProvider.class
+        .getSimpleName(), "onDataSetChanged");
+        mData = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
+                new String[]{"Distinct " + QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE, QuoteColumns.CHANGE},
+                QuoteColumns.ISCURRENT + " = ?",
+                new String[]{"1"}, null);
+        Binder.restoreCallingIdentity(identityToken);
     }
 
     @Override
     public void onDestroy() {
-
+        if (mData != null) {
+            mData.close();
+            mData = null;
+        }
     }
 
     @Override

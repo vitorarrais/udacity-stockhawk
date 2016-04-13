@@ -1,9 +1,12 @@
 package com.sam_chordas.android.stockhawk.rest;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v7.widget.RecyclerView;
+
+import com.sam_chordas.android.stockhawk.widget.StockWidgetProvider;
 
 /**
  * Created by sam_chordas on 10/6/15.
@@ -18,9 +21,11 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
     private boolean dataIsValid;
     private int rowIdColumn;
     private DataSetObserver mDataSetObserver;
+    private Context mContext;
 
     public CursorRecyclerViewAdapter(Context context, Cursor cursor) {
         mCursor = cursor;
+        mContext = context;
         dataIsValid = cursor != null;
         rowIdColumn = dataIsValid ? mCursor.getColumnIndex("_id") : -1;
         mDataSetObserver = new NotifyingDataSetObserver();
@@ -83,28 +88,36 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             }
             rowIdColumn = newCursor.getColumnIndexOrThrow("_id");
             dataIsValid = true;
-            notifyDataSetChanged();
+            notifyDataChanged();
         } else {
             rowIdColumn = -1;
             dataIsValid = false;
-            notifyDataSetChanged();
+            notifyDataChanged();
         }
         return oldCursor;
     }
 
     private class NotifyingDataSetObserver extends DataSetObserver {
+
+
         @Override
         public void onChanged() {
             super.onChanged();
             dataIsValid = true;
-            notifyDataSetChanged();
+            notifyDataChanged();
         }
 
         @Override
         public void onInvalidated() {
             super.onInvalidated();
             dataIsValid = false;
-            notifyDataSetChanged();
+            notifyDataChanged();
         }
+    }
+
+    private void notifyDataChanged(){
+        Intent i = new Intent(StockWidgetProvider.ACTION_DATA_UPDATED);
+        this.mContext.sendBroadcast(i);
+        notifyDataSetChanged();
     }
 }
