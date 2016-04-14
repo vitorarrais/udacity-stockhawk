@@ -110,7 +110,7 @@ public class StockDetailActivity extends AppCompatActivity {
         if (Utils.isDeviceConnected(this)) {
             if (cursor != null && cursor.getCount() > 0) {
 
-                cursor.moveToFirst();
+                cursor.moveToLast();
                 LineSet set = new LineSet();
                 int i = 0;
                 Float minimumPrice = -1.0f;
@@ -153,7 +153,7 @@ public class StockDetailActivity extends AppCompatActivity {
                     }
                     i++;
 
-                } while (cursor.moveToNext());
+                } while (cursor.moveToPrevious());
 
                 // adjust axis border values based on min and max prices
                 if (minimumPrice != -1.0f && maximumPrice != -1.0f) {
