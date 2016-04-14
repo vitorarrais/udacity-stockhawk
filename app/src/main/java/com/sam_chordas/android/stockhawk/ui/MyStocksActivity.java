@@ -6,8 +6,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
@@ -89,7 +87,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         if (savedInstanceState == null) {
             // Run the initialize task service so that some stocks appear upon an empty database
             mServiceIntent.putExtra("tag", "init");
-            if (isConnected()) {
+            if (Utils.isDeviceConnected(this)) {
                 showEmptyState(false);
                 startService(mServiceIntent);
             } else {
@@ -119,7 +117,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isConnected()) {
+                if (Utils.isDeviceConnected(MyStocksActivity.this)) {
                     new MaterialDialog.Builder(mContext).title(R.string.symbol_search)
                             .content(R.string.content_test)
                             .inputType(InputType.TYPE_CLASS_TEXT)
@@ -159,7 +157,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mItemTouchHelper.attachToRecyclerView(recyclerView);
 
         mTitle = getTitle();
-        if (isConnected()) {
+        if (Utils.isDeviceConnected(this)) {
             long period = 3600L;
             long flex = 10L;
             String periodicTag = "periodic";
@@ -189,7 +187,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
 
     private void retry() {
 
-        if (isConnected()) {
+        if (Utils.isDeviceConnected(this)) {
             showEmptyState(false);
             mServiceIntent.putExtra("tag", "init");
             startService(mServiceIntent);
@@ -255,6 +253,10 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
             this.getContentResolver().notifyChange(QuoteProvider.Quotes.CONTENT_URI, null);
         }
 
+        if (id == R.id.action_refresh){
+            retry();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -290,14 +292,6 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         toast.show();
     }
 
-    private boolean isConnected() {
-        ConnectivityManager cm =
-                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-    }
 
     private void showEmptyState(boolean show) {
         if (show) {

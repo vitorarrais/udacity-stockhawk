@@ -1,6 +1,9 @@
 package com.sam_chordas.android.stockhawk.rest;
 
 import android.content.ContentProviderOperation;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
@@ -10,7 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -22,7 +28,10 @@ public class Utils {
 
     public static boolean showPercent = true;
 
-    public static class StockQuoteNotFoundException extends Exception{}
+    private static int HOUR_IN_MILLIS = 3600000;
+
+    public static class StockQuoteNotFoundException extends Exception {
+    }
 
     public static ArrayList quoteJsonToContentVals(String JSON) throws StockQuoteNotFoundException {
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
@@ -42,13 +51,13 @@ public class Utils {
                     // so check if json has any non null value
                     boolean notFound = true;
                     Iterator<?> keys = jsonObject.keys();
-                    while( keys.hasNext() ) {
-                        String key = (String)keys.next();
-                        if (!key.equals("Symbol") && !key.equals("symbol") && !jsonObject.isNull(key)){
+                    while (keys.hasNext()) {
+                        String key = (String) keys.next();
+                        if (!key.equals("Symbol") && !key.equals("symbol") && !jsonObject.isNull(key)) {
                             notFound = false;
                         }
                     }
-                    if (notFound){
+                    if (notFound) {
                         throw new StockQuoteNotFoundException();
                     }
 
@@ -103,6 +112,7 @@ public class Utils {
                     jsonObject.getString("ChangeinPercent"), true));
             builder.withValue(QuoteColumns.CHANGE, truncateChange(change, false));
             builder.withValue(QuoteColumns.ISCURRENT, 1);
+            builder.withValue(QuoteColumns.CREATED, fromDateToString(new Date()));
             if (change.charAt(0) == '-') {
                 builder.withValue(QuoteColumns.ISUP, 0);
             } else {
@@ -113,5 +123,35 @@ public class Utils {
             e.printStackTrace();
         }
         return builder.build();
+    }
+
+    public static Date fromStringToDate(String dateString) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        Date date = null;
+        try {
+            date = format.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    public static String fromDateToString(Date date) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        String dateString = df.format(date);
+        return dateString;
+    }
+
+    public static boolean isLastHour(Date date){
+        return System.currentTimeMillis() - date.getTime() <= HOUR_IN_MILLIS;
+    }
+
+    public static boolean isDeviceConnected(Context context){
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
     }
 }

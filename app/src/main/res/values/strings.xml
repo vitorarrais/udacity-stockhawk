@@ -1,19 +1,25 @@
 <resources>
-  <string name="app_name">Stock Hawk</string>
+    <string name="app_name">Stock Hawk</string>
 
-  <string name="action_example">Example action</string>
+    <string name="action_example">Example action</string>
 
-  <string name="action_settings">Settings</string>
-  <string name="action_change_units">Change Units</string>
-  <string name="symbol_search">Symbol Search</string>
-  <string name="content_test">Search for a Stock Symbol</string>
-  <string name="input_hint">FB</string>
-  <string name="input_prefill"></string>
-  <string name="network_toast">Uh-oh! This app requires an internet connection</string>
-  <string name="fab_content_description">Add a new stock symbol</string>
-  <string name="stock_already_saved">"This stock is already saved!</string>
-  <string name="invalid_stock_symbol">Invalid stock symbol</string>
-  <string name="stock_quote_not_found">Sorry, corresponding quote was not found</string>
-  <string name="empty_state_text">Please, check your device connectivity and try again</string>
-  <string name="retry">No connectivity. Please, press to try again.</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_change_units">Change Units</string>
+    <string name="symbol_search">Symbol Search</string>
+    <string name="content_test">Search for a Stock Symbol</string>
+    <string name="input_hint">FB</string>
+    <string name="input_prefill"></string>
+    <string name="network_toast">Uh-oh! This app requires an internet connection</string>
+    <string name="fab_content_description">Add a new stock symbol</string>
+    <string name="stock_already_saved">"This stock is already saved!</string>
+    <string name="invalid_stock_symbol">Invalid stock symbol</string>
+    <string name="stock_quote_not_found">Sorry, corresponding quote was not found</string>
+    <string name="no_connection">Please, check your device connectivity and try again</string>
+    <string name="retry">No connectivity. Please, press to try again.</string>
+    <string name="graph_unavailable">Sorry, no graph available</string>
+    <string name="last_hour_alert">The information shown in this graph refer only for last hour</string>
+    <string name="alert">Stock values for the last past hour</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="stocks_unavailable">No stocks available</string>
+    <string name="tooltip_time_suffix">%1$dmin ago</string>
 </resources>

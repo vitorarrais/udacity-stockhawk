@@ -1,12 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:chart="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="24dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="11sp"
+        android:text="@string/alert"
+        android:layout_marginTop="12dp"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:padding="6dp"/>
 
     <com.db.chart.view.LineChartView
-        xmlns:chart="http://schemas.android.com/apk/res-auto"
         android:id="@+id/linechart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        chart:chart_axisColor="@android:color/white"
+        android:paddingRight="24dp"
+        android:paddingEnd="24dp"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:text="@string/graph_unavailable"
+        android:visibility="gone" />
+
+
+</LinearLayout>

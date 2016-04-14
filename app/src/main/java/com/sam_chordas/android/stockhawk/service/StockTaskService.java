@@ -63,7 +63,7 @@ public class StockTaskService extends GcmTaskService {
         if (mContext == null) {
             mContext = this;
         }
-        if (params.getExtras().getParcelable(StockIntentServiceReceiver.STOCK_INTENT_RECEIVER) != null) {
+        if (params.getExtras()!=null && params.getExtras().getParcelable(StockIntentServiceReceiver.STOCK_INTENT_RECEIVER) != null) {
             mResultReceiver = params.getExtras().getParcelable(StockIntentServiceReceiver.STOCK_INTENT_RECEIVER);
         }
         StringBuilder urlStringBuilder = new StringBuilder();

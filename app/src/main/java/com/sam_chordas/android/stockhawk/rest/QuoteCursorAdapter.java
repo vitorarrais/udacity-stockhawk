@@ -85,12 +85,14 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     }
 
     public void onItemClick(int position) {
-        Cursor c = getCursor();
-        c.moveToPosition(position);
-        String symbol = c.getString(c.getColumnIndex(QuoteColumns.SYMBOL));
-        Intent i = new Intent(mContext, StockDetailActivity.class);
-        i.putExtra(StockDetailActivity.EXTRA_SYMBOL, symbol);
-        mContext.startActivity(i);
+        if (position>=0) {
+            Cursor c = getCursor();
+            c.moveToPosition(position);
+            String symbol = c.getString(c.getColumnIndex(QuoteColumns.SYMBOL));
+            Intent i = new Intent(mContext, StockDetailActivity.class);
+            i.putExtra(StockDetailActivity.EXTRA_SYMBOL, symbol);
+            mContext.startActivity(i);
+        }
     }
 
     @Override

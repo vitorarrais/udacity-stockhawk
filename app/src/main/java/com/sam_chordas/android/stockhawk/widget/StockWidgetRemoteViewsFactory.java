@@ -12,6 +12,7 @@ import android.widget.RemoteViewsService;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.ui.StockDetailActivity;
 
 /**
  * Created by User on 11/04/2016.
@@ -73,6 +74,10 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
         views.setTextViewText(R.id.stock_symbol, mData.getString(mData.getColumnIndex(QuoteColumns.SYMBOL)));
         views.setTextViewText(R.id.bid_price, mData.getString(mData.getColumnIndex(QuoteColumns.BIDPRICE)));
         views.setTextViewText(R.id.change, mData.getString(mData.getColumnIndex(QuoteColumns.CHANGE)));
+
+        final Intent fillIntent = new Intent();
+        fillIntent.putExtra(StockDetailActivity.EXTRA_SYMBOL, mData.getString(mData.getColumnIndex(QuoteColumns.SYMBOL)));
+        views.setOnClickFillInIntent(R.id.widget_list_item, fillIntent);
 
         return views;
     }

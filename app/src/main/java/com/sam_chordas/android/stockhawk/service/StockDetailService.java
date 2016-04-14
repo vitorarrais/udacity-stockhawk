@@ -27,7 +27,7 @@ public class StockDetailService extends Service {
 
     public Cursor queryBySymbol(String symbol){
         mCursor = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
-                new String[]{QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE, QuoteColumns.CHANGE},
+                new String[]{QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE, QuoteColumns.CREATED},
                 QuoteColumns.SYMBOL + " = ?",
                 new String[]{symbol}, null);
         return mCursor;
