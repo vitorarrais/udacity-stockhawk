@@ -1,3 +1,4 @@
+<!-- These are the strings that will be translated to Egyptian -->
 <resources>
     <string name="app_name" translatable="false">Stock Hawk</string>
 
@@ -22,3 +23,4 @@
     <string name="stocks_unavailable">No stocks available</string>
     <string name="tooltip_time_suffix">%1$dmin ago</string>
 </resources>
+
